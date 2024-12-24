@@ -1,0 +1,29 @@
+1. Fonksiyonlar ve Detaylı Açıklamaları
+
+Başlangıç olarak, kütüphanedeki tüm fonksiyonları birer birer ele alalım. Her fonksiyon için:
+	•	Amacı: Ne işe yaradığı.
+	•	Parametreleri: Girdi değerleri ve anlamları.
+	•	Kullanım Örnekleri: Kod parçacıkları ile nasıl kullanılacağı.
+
+Fonksiyonların listesini aşağıda sıralıyorum. Hangisinden başlamamı istersiniz?
+	1.	begin(): Ethernet modülünü başlatır.
+	2.	setSubnet(IPAddress subnetMask): Alt ağ maskesini ayarlar.
+	3.	setPort(int localPort): UDP portunu ayarlar.
+	4.	setGateway(IPAddress gatewayAddress): Ağ geçidini ayarlar.
+	5.	setPacketBufferSize(size_t bufferSize): Paket buffer boyutunu ayarlar.
+	6.	setPacketBufferSizeHigh(): Paket buffer boyutunu yüksek seviyeye ayarlar (512 bayt).
+	7.	setPacketBufferSizeMedium(): Paket buffer boyutunu orta seviyeye ayarlar (256 bayt).
+	8.	setPacketBufferSizeLow(): Paket buffer boyutunu düşük seviyeye ayarlar (128 bayt).
+	9.	setPacketBufferSizeVeryLow(): Paket buffer boyutunu çok düşük seviyeye ayarlar (64 bayt).
+	10.	setChecksumCharacter(char checksumCharacter): Checksum karakterini ayarlar.
+	11.	setChecksumOn(): Checksum doğrulamasını etkinleştirir.
+	12.	setChecksumOff(): Checksum doğrulamasını devre dışı bırakır.
+	13.	setMessageAndChecksumOn(): Mesaj ve checksum’ı birleştirir.
+	14.	setMessageAndChecksumOff(): Mesaj ve checksum’ı ayrı işler.
+	15.	setTimeout(int milis): Zaman aşımı süresini ayarlar.
+	16.	calculateChecksum(const String& data): Verinin checksum değerini hesaplar.
+	17.	enableDebug(): Hata ayıklama modunu etkinleştirir.
+	18.	disableDebug(): Hata ayıklama modunu devre dışı bırakır.
+	19.	showInfo(): Tüm mevcut ayarları yazdırır.
+	20.	listen(): UDP verilerini dinler.
+	21.	listenOnlyData(): Hata mesajlarını atlayarak sadece geçerli veriyi döndürür.

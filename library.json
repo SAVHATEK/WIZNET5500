@@ -1,0 +1,33 @@
+{
+    "name": "WIZNET_5500",
+    "version": "1.0.0",
+    "author": "CAN BERK ÖRENBOZ",
+    "license": "MIT",
+    "description": "A library for initializing and managing WIZNET 5500 Ethernet modules.",
+    "keywords": [
+        "WIZNET",
+        "Ethernet",
+        "UDP",
+        "Networking"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SAVHATEK/WIZNET_5500"
+    },
+    "dependencies": {
+        "Ethernet": "^2.0.0",
+        "SPI": "^1.0.0"
+    },
+    "examples": [
+        {
+            "name": "Basic Initialization",
+            "path": "examples/BasicInitialization/BasicInitialization.ino",
+            "description": "Basic example showing how to initialize WIZNET 5500."
+        },
+        {
+            "name": "Debug Mode Example",
+            "path": "examples/DebugMode/DebugMode.ino",
+            "description": "Example showing how to enable debug mode for troubleshooting."
+        }
+    ]
+}

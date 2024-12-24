@@ -1,0 +1,686 @@
+Fonksiyon 1: begin()
+
+Amacı:
+begin() fonksiyonu, WIZNET 5500 Ethernet modülünü başlatır. Bu işlem sırasında modül, ağ ayarlarını yapılandırır ve UDP protokolü üzerinden iletişim için gerekli hazırlıkları yapar.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+• Başarısızlık durumunda seri monitöre hata mesajı yazdırır ve programı durdurur.
+
+Nasıl Çalışır:
+1. WIZNET 5500 donanımını başlatır.
+2. Ethernet ayarlarını yükler ve statik bir IP adresi atar.
+3. UDP protokolü için belirtilen port üzerinden dinlemeye başlar.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+#include "WIZNET_5500.h"
+
+IPAddress ip(192, 168, 1, 125);
+int port = 8888;
+int csPin = 5;
+
+WIZNET_5500 ethernet(ip, port, csPin);
+
+void setup() {
+    Serial.begin(115200);
+    ethernet.begin(); // Ethernet modülünü başlat
+}
+
+void loop() {
+    // Ana döngü
+}
+
+Debug Moduyla Kullanım:
+#include "WIZNET_5500.h"
+
+IPAddress ip(192, 168, 1, 125);
+int port = 8888;
+int csPin = 5;
+
+WIZNET_5500 ethernet(ip, port, csPin);
+
+void setup() {
+    Serial.begin(115200);
+    ethernet.enableDebug();  // Debug modunu etkinleştir
+    ethernet.begin();        // Ethernet modülünü başlat
+}
+
+void loop() {
+    // Ana döngü
+}
+
+Özel Notlar:
+1. Başarısızlık Durumu:
+   - Eğer Ethernet modülü başlatılamazsa, Ethernet.begin() fonksiyonu 0 döndürür ve sistem sonsuz bir döngüye girerek hata mesajını yazdırır.
+2. Statik IP Kullanımı:
+   - Eğer DHCP başarısız olursa, begin() statik IP ile çalışmaya devam eder.
+3. Debug Mesajı:
+   - Debug modu etkinse, aşağıdaki gibi bir mesaj seri monitöre yazdırılır:
+     DEBUG: Ethernet failed to initialize.
+     DEBUG: IP address: 192.168.1.125
+     DEBUG: Listen Port: 8888
+
+
+Fonksiyon 2: setSubnet(IPAddress subnetMask)
+
+Amacı:
+setSubnet() fonksiyonu, ağ maskesini (subnet mask) ayarlamak için kullanılır. Bu, cihazın hangi IP adres aralığında çalışacağını tanımlar.
+
+Parametreler:
+• IPAddress subnetMask: Subnet mask adresi (örneğin: 255.255.255.0).
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Giriş olarak verilen subnet mask değerini sınıfın SUBNET değişkenine atar.
+2. Subnet maskesi, cihazın yerel ağda diğer cihazlarla nasıl iletişim kuracağını belirler.
+3. Debug modu etkinse, subnet maskesi seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setSubnet(IPAddress(255, 255, 255, 0));
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setSubnet(IPAddress(255, 255, 255, 0));  // Subnet maskesi ayarla
+
+Özel Notlar:
+1. Subnet mask, ağınızda kullanılan doğru değeri yansıtmalıdır. Örneğin:
+   - 255.255.255.0: Yerel ağ (256 IP adresine kadar).
+   - 255.255.0.0: Daha geniş bir ağ (65,536 IP adresine kadar).
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: SUBNET address: 255.255.255.0
+
+
+Fonksiyon 3: setPort(int localPort)
+
+Amacı:
+setPort() fonksiyonu, WIZNET 5500’ün UDP iletişiminde hangi portu kullanacağını ayarlar.
+
+Parametreler:
+• int localPort: Kullanılacak UDP port numarası (örneğin: 8888).
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Kullanıcının belirttiği port numarasını sınıfın PORT değişkenine atar.
+2. UDP iletişimi için bu port üzerinden veri alışverişi yapılır.
+3. Debug modu etkinse, ayarlanan port numarası seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setPort(8888);
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setPort(8888);  // UDP portunu ayarla
+
+Özel Notlar:
+1. UDP portları, belirli bir uygulama veya iletişim protokolü için rezerve edilebilir. Örneğin:
+   - 8888: Genel amaçlı.
+   - 123: NTP (Network Time Protocol) için kullanılır.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: PORT address: 8888
+
+
+Fonksiyon 4: setGateway(IPAddress gatewayAddress)
+
+Amacı:
+setGateway() fonksiyonu, ağ geçidi (gateway) adresini ayarlamak için kullanılır. Ağ geçidi, cihazın başka ağlara (örneğin, internete) erişebilmesini sağlar.
+
+Parametreler:
+• IPAddress gatewayAddress: Ağ geçidi adresi (örneğin: 192.168.1.1).
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Giriş olarak verilen ağ geçidi adresini sınıfın GATEWAY değişkenine atar.
+2. Bu adres, cihazın yerel ağ dışındaki cihazlarla iletişim kurmasını sağlar.
+3. Debug modu etkinse, ayarlanan ağ geçidi adresi seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setGateway(IPAddress(192, 168, 1, 1));
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setGateway(IPAddress(192, 168, 1, 1));  // Ağ geçidi adresini ayarla
+
+Özel Notlar:
+1. Ağ Geçidi Doğruluğu:
+   - Ağ geçidi adresi genellikle yönlendiricinizin (router) IP adresidir.
+   - Örneğin:
+     - 192.168.1.1: Çoğu ev yönlendiricisinin varsayılan adresi.
+     - 10.0.0.1: Bazı kurumsal ağlarda kullanılan adres.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: GATEWAY address: 192.168.1.1
+
+
+Fonksiyon 5: setPacketBufferSize(size_t bufferSize)
+
+Amacı:
+setPacketBufferSize() fonksiyonu, WIZNET 5500 modülünde kullanılacak olan paket tamponunun (packet buffer) boyutunu ayarlar.
+
+Parametreler:
+• size_t bufferSize: Tampon boyutunu bayt cinsinden belirtir (örneğin: 128, 256, 512).
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Girilen tampon boyutunu (buffer size) sınıfın `packetBufferSize` değişkenine atar.
+2. Eski tampon belleği (eğer mevcutsa) serbest bırakır ve yeni boyutta bir tampon bellek ayırır.
+3. Debug modu etkinse, ayarlanan tampon boyutu seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setPacketBufferSize(256);
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setPacketBufferSize(512);  // Tampon boyutunu 512 bayt olarak ayarla
+
+Özel Notlar:
+1. Tampon Boyutu:
+   - Bu değer veri transferi performansını ve belleğin etkin kullanımını doğrudan etkiler. Daha büyük tampon boyutları daha fazla bellek kullanır ancak büyük paketleri işlemek için gereklidir.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Buffer size: 256
+
+
+Fonksiyon 6: setPacketBufferSizeHigh()
+
+Amacı:
+setPacketBufferSizeHigh() fonksiyonu, WIZNET 5500 modülünün paket tampon boyutunu yüksek seviyeye (512 bayt) ayarlamak için kullanılır.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Eski tampon belleği (eğer mevcutsa) serbest bırakır.
+2. Tampon boyutunu 512 bayt olarak ayarlayarak yeni bir tampon belleği oluşturur.
+3. Debug modu etkinse, ayarlanan tampon boyutu seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setPacketBufferSizeHigh();
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setPacketBufferSizeHigh();  // Tampon boyutunu yüksek seviyeye ayarla
+
+Özel Notlar:
+1. Performans:
+   - Bu fonksiyon, yüksek boyutlu veri paketleriyle çalışırken daha iyi performans sağlar ancak daha fazla bellek kullanır.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Buffer size: 512
+
+
+Fonksiyon 7: setPacketBufferSizeMedium()
+
+Amacı:
+setPacketBufferSizeMedium() fonksiyonu, WIZNET 5500 modülünün paket tampon boyutunu orta seviyeye (256 bayt) ayarlamak için kullanılır.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Eski tampon belleği (eğer mevcutsa) serbest bırakır.
+2. Tampon boyutunu 256 bayt olarak ayarlayarak yeni bir tampon belleği oluşturur.
+3. Debug modu etkinse, ayarlanan tampon boyutu seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setPacketBufferSizeMedium();
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setPacketBufferSizeMedium();  // Tampon boyutunu orta seviyeye ayarla
+
+Özel Notlar:
+1. Performans:
+   - Orta boyutlu veri paketleriyle çalışmak için ideal bir tampon boyutudur ve bellek kullanımı açısından dengelidir.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Buffer size: 256
+
+
+Fonksiyon 8: setPacketBufferSizeLow()
+
+Amacı:
+setPacketBufferSizeLow() fonksiyonu, WIZNET 5500 modülünün paket tampon boyutunu düşük seviyeye (128 bayt) ayarlamak için kullanılır.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Eski tampon belleği (eğer mevcutsa) serbest bırakır.
+2. Tampon boyutunu 128 bayt olarak ayarlayarak yeni bir tampon belleği oluşturur.
+3. Debug modu etkinse, ayarlanan tampon boyutu seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setPacketBufferSizeLow();
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setPacketBufferSizeLow();  // Tampon boyutunu düşük seviyeye ayarla
+
+Özel Notlar:
+1. Performans:
+   - Küçük boyutlu veri paketleriyle çalışırken yeterlidir ve bellek kullanımını minimumda tutar.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Buffer size: 128
+
+
+Fonksiyon 9: setPacketBufferSizeVeryLow()
+
+Amacı:
+setPacketBufferSizeVeryLow() fonksiyonu, WIZNET 5500 modülünün paket tampon boyutunu çok düşük seviyeye (64 bayt) ayarlamak için kullanılır.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Eski tampon belleği (eğer mevcutsa) serbest bırakır.
+2. Tampon boyutunu 64 bayt olarak ayarlayarak yeni bir tampon belleği oluşturur.
+3. Debug modu etkinse, ayarlanan tampon boyutu seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setPacketBufferSizeVeryLow();
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setPacketBufferSizeVeryLow();  // Tampon boyutunu çok düşük seviyeye ayarla
+
+Özel Notlar:
+1. Performans:
+   - Hafif iletişim gereksinimleri olan uygulamalarda bellek kullanımını optimize eder.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Buffer size: 64
+
+
+Fonksiyon 10: setChecksumCharacter(char checksumCharacter)
+
+Amacı:
+setChecksumCharacter() fonksiyonu, kontrol toplamı (checksum) için kullanılacak karakteri ayarlar. Bu karakter, gönderilen veya alınan veri ile kontrol toplamı arasındaki ayırıcı olarak kullanılır.
+
+Parametreler:
+• char checksumCharacter: Ayırıcı olarak kullanılacak karakter (örneğin: '|').
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Girilen karakter, sınıfın `checksumChar` değişkenine atanır.
+2. Debug modu etkinse, ayarlanan karakter seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setChecksumCharacter('|');
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setChecksumCharacter('|');  // Checksum karakterini ayarla
+
+Özel Notlar:
+1. Karakter seçimi, gönderilen ve alınan veri formatına uygun olmalıdır.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Checksum Char: |
+
+---
+
+Fonksiyon 11: setChecksumOn()
+
+Amacı:
+setChecksumOn() fonksiyonu, kontrol toplamı (checksum) doğrulamasını etkinleştirir.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Sınıfın `checksumControl` değişkeni `true` olarak ayarlanır.
+2. Debug modu etkinse, kontrol toplamı doğrulamasının etkinleştirildiğine dair bir mesaj yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setChecksumOn();
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setChecksumOn();  // Checksum doğrulamasını etkinleştir
+
+Özel Notlar:
+1. Kontrol toplamı doğrulaması, veri bütünlüğünü kontrol etmek için önemlidir.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Checksum Control: TRUE
+
+---
+
+Fonksiyon 12: setChecksumOff()
+
+Amacı:
+setChecksumOff() fonksiyonu, kontrol toplamı (checksum) doğrulamasını devre dışı bırakır.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Sınıfın `checksumControl` değişkeni `false` olarak ayarlanır.
+2. Debug modu etkinse, kontrol toplamı doğrulamasının devre dışı bırakıldığına dair bir mesaj yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setChecksumOff();
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setChecksumOff();  // Checksum doğrulamasını devre dışı bırak
+
+Özel Notlar:
+1. Kontrol toplamı doğrulamasını devre dışı bırakmak, veri bütünlüğünü kontrol etmeye gerek olmayan durumlar için kullanılabilir.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Checksum Control: FALSE
+
+Fonksiyon 13: setMessageAndChecksumOn()
+
+Amacı:
+setMessageAndChecksumOn() fonksiyonu, mesaj ve kontrol toplamını (checksum) birleştirerek işlemleri birlikte gerçekleştirecek şekilde ayarlar.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Sınıfın `messageAndchecksum` değişkeni `true` olarak ayarlanır.
+2. Debug modu etkinse, bu ayarın etkinleştirildiğine dair bir mesaj seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setMessageAndChecksumOn();
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setMessageAndChecksumOn();  // Mesaj ve kontrol toplamını birleştir
+
+Özel Notlar:
+1. Mesaj ve kontrol toplamı birleştirildiğinde, işlem tek bir adımda gerçekleştirilir.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Checksum and Message: TRUE
+
+---
+
+Fonksiyon 14: setMessageAndChecksumOff()
+
+Amacı:
+setMessageAndChecksumOff() fonksiyonu, mesaj ve kontrol toplamını ayrı işleyerek işlemleri birbirinden bağımsız hale getirir.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Sınıfın `messageAndchecksum` değişkeni `false` olarak ayarlanır.
+2. Debug modu etkinse, bu ayarın devre dışı bırakıldığına dair bir mesaj seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setMessageAndChecksumOff();
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setMessageAndChecksumOff();  // Mesaj ve kontrol toplamını ayrı işle
+
+Özel Notlar:
+1. Bu yöntem, daha ayrıntılı veya özel işlemler gerektiğinde kullanılır.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Checksum and Message: FALSE
+
+---
+
+Fonksiyon 15: setTimeout(int milis)
+
+Amacı:
+setTimeout() fonksiyonu, bir veri paketinin alınmasını beklemek için zaman aşımı süresini ayarlar.
+
+Parametreler:
+• int milis: Zaman aşımı süresi (milisaniye cinsinden).
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Girilen zaman aşımı süresi sınıfın `MILIS_TIMEOUT` değişkenine atanır.
+2. Debug modu etkinse, ayarlanan zaman aşımı süresi seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.setTimeout(2000);  // Zaman aşımını 2000 milisaniye olarak ayarla
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+ethernet.setTimeout(5000);  // Zaman aşımını 5000 milisaniye olarak ayarla
+
+Özel Notlar:
+1. Zaman aşımı süresi, bağlantının güvenilirliği ve veri transferinin hızlılığına göre ayarlanmalıdır.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Timeout duration: 2000 ms
+
+---
+
+Fonksiyon 16: calculateChecksum(const String& data)
+
+Amacı:
+calculateChecksum() fonksiyonu, bir veri dizisi için kontrol toplamını hesaplar.
+
+Parametreler:
+• const String& data: Kontrol toplamı hesaplanacak veri dizisi.
+
+Dönüş Değeri:
+• unsigned int: Hesaplanan kontrol toplamı değeri.
+
+Nasıl Çalışır:
+1. Veri dizisindeki her karakterin ASCII değerlerini toplar.
+2. Bu toplamı bir `unsigned int` olarak döndürür.
+3. Debug modu etkinse, hesaplanan kontrol toplamı seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+unsigned int checksum = ethernet.calculateChecksum("WIZNET_5500");
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();  // Debug modunu aç
+unsigned int checksum = ethernet.calculateChecksum("TEST DATA");
+
+Özel Notlar:
+1. Kontrol toplamı, veri bütünlüğünü doğrulamak için kullanılır.
+2. Debug modu etkinse, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: Calculated checksum: 1234
+
+
+Fonksiyon 17: enableDebug()
+
+Amacı:
+enableDebug() fonksiyonu, hata ayıklama (debug) modunu etkinleştirir. Bu mod, uygulamanın çalışma sırasında daha fazla bilgi yazdırmasını sağlar.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Sınıfın `DEBUG` değişkeni `true` olarak ayarlanır.
+2. Debug modu etkinleştirildiğinde, diğer fonksiyonlar bilgi mesajlarını seri monitöre yazdırır.
+3. Debug modunun etkinleştirildiğine dair bir mesaj seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.enableDebug();
+
+Özel Notlar:
+1. Debug modu, uygulama geliştirme ve sorun giderme sırasında faydalıdır.
+2. Debug modu etkinleştirildiğinde, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: DEBUG MODE: TRUE
+
+---
+
+Fonksiyon 18: disableDebug()
+
+Amacı:
+disableDebug() fonksiyonu, hata ayıklama (debug) modunu devre dışı bırakır. Bu mod kapatıldığında, uygulama bilgi mesajlarını yazdırmayı durdurur.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. Sınıfın `DEBUG` değişkeni `false` olarak ayarlanır.
+2. Debug modunun devre dışı bırakıldığına dair bir mesaj seri monitöre yazdırılır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.disableDebug();
+
+Özel Notlar:
+1. Debug modu devre dışı bırakıldığında, performans artışı sağlanabilir.
+2. Debug modu devre dışı bırakıldığında, seri monitöre aşağıdaki gibi bir mesaj yazdırılır:
+   DEBUG: DEBUG MODE: FALSE
+
+---
+
+Fonksiyon 19: showInfo()
+
+Amacı:
+showInfo() fonksiyonu, WIZNET 5500 modülünün mevcut tüm ayarlarını seri monitöre yazdırır.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• Hiçbir değer döndürmez.
+
+Nasıl Çalışır:
+1. IP adresi, port numarası, alt ağ maskesi (subnet mask), ağ geçidi (gateway) ve diğer ayarları seri monitöre yazdırır.
+2. Debug modu etkinleştirilmişse, hata ayıklama bilgileriyle birlikte daha ayrıntılı çıktılar alınır.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+ethernet.showInfo();
+
+Özel Notlar:
+1. Bu fonksiyon, cihazın ağ ayarlarını hızlı bir şekilde kontrol etmek için faydalıdır.
+2. Seri monitöre aşağıdaki gibi bir mesaj yazdırır:
+   DEBUG: IP Address: 192.168.1.125
+   DEBUG: PORT Address: 8888
+   DEBUG: SUBNET Address: 255.255.255.0
+   DEBUG: GATEWAY Address: 192.168.1.1
+   DEBUG: Checksum Character: |
+   DEBUG: Packet Buffer Size: 256
+   DEBUG: Checksum Control: ENABLED
+   DEBUG: Checksum and Message Combined: DISABLED
+   DEBUG: Timeout Duration: 2000 ms
+
+Fonksiyon 20: listen()
+
+Amacı:
+listen() fonksiyonu, UDP protokolü üzerinden gelen veri paketlerini dinler ve işler. Bu fonksiyon, gelen veriyi kontrol eder, gerekirse kontrol toplamını doğrular ve alınan mesajı döndürür.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• String: Gelen mesaj (hata durumunda hata mesajı döndürülür).
+
+Nasıl Çalışır:
+1. Gelen veri paketini okur ve boyutunu kontrol eder.
+2. Kontrol toplamı doğrulama etkinse, gelen veriyi ve kontrol toplamını doğrular.
+3. Doğru formatta veri alındıysa mesajı döndürür, aksi takdirde hata mesajı döndürür.
+4. Zaman aşımı, kablo bağlantısı kesilmesi gibi durumlarda ilgili hata mesajlarını döndürür.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+String message = ethernet.listen();
+if (!message.startsWith("ERROR")) {
+    Serial.println("Gelen mesaj: " + message);
+}
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();
+String message = ethernet.listen();
+if (!message.startsWith("ERROR")) {
+    Serial.println("Gelen mesaj: " + message);
+} else {
+    Serial.println("Hata: " + message);
+}
+
+Özel Notlar:
+1. Hata mesajları şunları içerebilir:
+   - "ERROR: TIMEOUT": Zaman aşımı.
+   - "ERROR: CABLE_DISCONNECTED": Kablo bağlantısı kesildi.
+   - "ERROR: PACKET_SIZE_EXCEEDED": Gelen paket tampon boyutunu aşıyor.
+   - "ERROR: CHECKSUM_INVALID": Kontrol toplamı doğrulama başarısız.
+2. Gelen veri kontrol toplamı ile birlikte değilse, kontrol toplamı doğrulaması devre dışı bırakılabilir.
+
+---
+
+Fonksiyon 21: listenOnlyData()
+
+Amacı:
+listenOnlyData() fonksiyonu, hata mesajlarını göz ardı ederek yalnızca geçerli veriyi döndürür. Bu, hatalar meydana geldiğinde bile önceki geçerli mesajın kullanılmasını sağlar.
+
+Parametreler:
+• Hiçbir parametre almaz.
+
+Dönüş Değeri:
+• String: Gelen geçerli mesaj (hata durumunda önceki geçerli mesaj döndürülür).
+
+Nasıl Çalışır:
+1. listen() fonksiyonunu çağırarak gelen mesajı kontrol eder.
+2. Eğer mesaj bir hata içermiyorsa, yeni mesajı döndürür.
+3. Hata varsa, bir önceki geçerli mesajı döndürür.
+
+Kullanım Örnekleri:
+Temel Kullanım:
+String message = ethernet.listenOnlyData();
+Serial.println("Son geçerli mesaj: " + message);
+
+Debug Modunda Kullanım:
+ethernet.enableDebug();
+String message = ethernet.listenOnlyData();
+Serial.println("Son geçerli mesaj: " + message);
+
+Özel Notlar:
+1. Hata durumunda mesaj döndürülse bile eski geçerli veri kullanılır, bu nedenle veri kaybı yaşanmaz.
+2. Debug modu etkinse, aşağıdaki gibi bir mesaj seri monitöre yazdırılır:
+   DEBUG: ERROR: NO_NEW DATA_USING_PREVIOUS_DATA
